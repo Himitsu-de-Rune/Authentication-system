@@ -39,17 +39,6 @@ class Role(Base):
 
 
 class Permission(Base):
-    """
-    resource: строка, например
-        "items"
-        "users"
-        "admin-panel"
-
-    action: строка, например
-        "read"
-        "write"
-        "delete"
-    """
     __tablename__ = 'permissions'
 
     id = Column(Integer, primary_key=True)
