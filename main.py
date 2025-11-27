@@ -2,6 +2,7 @@ from fastapi import FastAPI, Depends, HTTPException, Header
 from fastapi.openapi.utils import get_openapi
 from sqlalchemy.orm import Session
 from sqlalchemy import text
+
 from models import Base, User, Role, Permission
 from database import engine, get_db
 from auth import hash_password, verify_password, create_session, get_current_user

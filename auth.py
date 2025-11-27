@@ -1,11 +1,11 @@
 import uuid
-from fastapi import Depends, HTTPException, Security, Header
+from fastapi import Depends, HTTPException, Security
 from fastapi.security.api_key import APIKeyHeader
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 
-from database import SessionLocal, get_db
+from database import get_db
 from models import User, Session as UserSession
 
 
@@ -30,10 +30,7 @@ def create_session(db: Session, user_id: int):
     return token
 
 
-def get_current_user(
-    token: str = Security(api_key_header),
-    db: Session = Depends(get_db)
-):
+def get_current_user(token: str = Security(api_key_header), db: Session = Depends(get_db)):
     if not token:
         raise HTTPException(401, 'No session token')
 
