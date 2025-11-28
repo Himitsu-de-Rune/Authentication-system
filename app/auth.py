@@ -5,8 +5,8 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 
-from database import get_db
-from models import User, Session as UserSession
+from app.database import get_db
+from app.models.models import User, Session as UserSession
 
 
 pwd = CryptContext(schemes=['pbkdf2_sha256'], deprecated='auto')

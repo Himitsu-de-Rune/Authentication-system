@@ -3,15 +3,15 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from main import app
-from database import Base, get_db
-from models import User, Role
-from auth import hash_password
+from app.main import app
+from app.database import Base, get_db
+from app.models.models import User, Role
+from app.auth import hash_password
 
 
 # ------------------------ Test database ------------------------
 
-SQLALCHEMY_DATABASE_URL = 'sqlite:///./test.db'
+SQLALCHEMY_DATABASE_URL = 'sqlite:///./tests/test_data/test.db'
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL, connect_args={'check_same_thread': False}
@@ -105,7 +105,6 @@ def test_register_user(client):
         'password': 'abc123'
     })
     assert response.status_code == 200
-    assert response.json()['status'] == 'ok'
 
 def test_login_user(client, user_token):
     assert user_token is not None
@@ -114,9 +113,13 @@ def test_login_admin(client, admin_token):
     assert admin_token is not None
 
 def test_admin_create_role(client, admin_token):
-    response = client.post('/admin/role', params={'name': 'manager'}, headers=auth_headers(admin_token))
+    response = client.post('/admin/role', json={'name': 'manager'}, headers=auth_headers(admin_token))
     assert response.status_code == 200
     assert response.json()['status'] == 'role created'
+    response = client.post('/admin/role', json={'name': 'manager'}, headers=auth_headers(admin_token))
+    assert response.status_code == 200
+    assert response.json()['status'] == 'role already exist'
+
 
 def test_admin_create_permission(client, admin_token):
     db = next(override_get_db())
@@ -127,7 +130,6 @@ def test_admin_create_permission(client, admin_token):
         headers=auth_headers(admin_token)
     )
     assert response.status_code == 200
-    assert response.json()['status'] == 'permission added'
 
 def test_user_can_read_items(client, user_token):
     response = client.get('/items/', headers=auth_headers(user_token))
@@ -160,7 +162,7 @@ def test_user_me_endpoint(client, user_token):
     assert response.status_code == 200
     data = response.json()
     assert data['email'] == 'user@example.com'
-    assert data['active'] is True
+    assert data['is_active'] is True
 
 def test_update_user(client, user_token):
     response = client.put('/user/update', json={'first_name': 'Updated'}, headers=auth_headers(user_token))

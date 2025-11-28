@@ -2,8 +2,8 @@ from fastapi import Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 
-from auth import get_current_user
-from database import get_db
+from app.auth import get_current_user
+from app.database import get_db
 
 
 def check_access(resource: str, action: str):
